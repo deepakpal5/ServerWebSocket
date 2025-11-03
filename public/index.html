@@ -221,7 +221,9 @@ function clearFeed() {
 // --- WebSocket ---
 function openWS() {
   // const url = 'ws://localhost:5632';
-  const url = 'wss://servertest-dgrx.onrender.com';
+  // const url = 'wss://servertest-dgrx.onrender.com';
+  const url = (location.origin.replace(/^http/, 'ws')) ;
+  console.log(`Trying to connect to ${url}`);
   ws = new WebSocket(url);
 
   ws.onopen = () => console.log(`🟢 WebSocket connected to ${url}`);
