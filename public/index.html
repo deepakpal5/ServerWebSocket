@@ -234,7 +234,7 @@ function openWS() {
   ws.onerror = (err) => console.error("⚠️ WebSocket error:", err);
 
   ws.onmessage = (evt) => {
-    // console.log("🔹 Message received:", evt.data);
+    console.log("🔹 Message received:", evt.data);
     try {
       const obj = JSON.parse(evt.data);
 
