@@ -147,6 +147,9 @@ app.get("/endpoints", (req, res) => {
 });
 
 // ---- Start server ----
-server.listen(5632, () => {
-  console.log("✅ Server running on port 5632");
+
+const PORT = process.env.PORT || 5632;
+server.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
 });
+
