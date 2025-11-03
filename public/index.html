@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ServoTech SmartMeter — Live Dashboard</title>
+  <style>
+    :root{
+      --bg:#09090b; --panel:#0f1416; --muted:#7fb07f; --accent:#38d39f; --card:#0b0f10; --glass:rgba(255,255,255,0.03);
+      --radius:6px; --gap:10px; --mono:ui-monospace, Menlo, Monaco, 'Roboto Mono', monospace;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#050506);color:#e6f5ea}
+    .app{display:flex;gap:var(--gap);height:100vh;padding:8px;box-sizing:border-box}
+    .sidebar{width:220px;background:linear-gradient(180deg,var(--panel),#071014);border-radius:var(--radius);padding:8px;display:flex;flex-direction:column;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px;padding-bottom:6px;border-bottom:1px solid var(--glass)}
+    .logo{width:40px;height:40px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#0af);display:flex;align-items:center;justify-content:center;font-weight:700;color:#022}
+    .brand h1{font-size:1rem;margin:0;color:#dfffe0}
+    .brand p{margin:0;font-size:0.8rem;color:var(--muted)}
+    label.meta{font-size:0.85rem;color:var(--muted);display:block;margin-bottom:6px}
+    select#endpointSelect {
+      appearance: none;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(56, 211, 159, 0.4);
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: #dfffe0;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.25s ease-in-out;
+      box-shadow: inset 0 0 6px rgba(56, 211, 159, 0.15);
+      cursor: pointer;
+    }
+    select#endpointSelect:hover {
+      background: rgba(56, 211, 159, 0.12);
+      border-color: #38d39f;
+      box-shadow: 0 0 6px rgba(56, 211, 159, 0.35);
+    }
+    select#endpointSelect:focus {
+      outline: none;
+      background: rgba(56, 211, 159, 0.15);
+      border-color: #38d39f;
+      box-shadow: 0 0 8px rgba(56, 211, 159, 0.45);
+    }
+    select#endpointSelect option {
+      background: #0f1416;
+      color: #dfffe0;
+      font-weight: 500;
+    }
+
+    .main{flex:1;display:flex;flex-direction:column;gap:var(--gap)}
+    .topbar{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.05)}
+    .topbar .meta{color:#a0a0a0;font-size:0.85rem}
+    .feed{flex:1;display:flex;flex-direction:column;background:transparent;border-radius:6px;padding:6px}
+    .feed-header{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.05)}
+    .feed-header button {
+      background: rgba(56, 211, 159, 0.12);
+      color: #38d39f;
+      border: 1px solid rgba(56, 211, 159, 0.4);
+      border-radius: 6px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.25s;
+    }
+    .feed-header button:hover {
+      background: rgba(56, 211, 159, 0.25);
+    }
+
+    .messages{padding:4px 2px;overflow-y:auto;flex:1;font-family:var(--mono);font-size:0.68rem;color:#cfe9d0}
+    .messages pre{font-size:0.68rem;line-height:1.05;margin:0}
+    .msg{padding:4px;border-radius:4px;margin-bottom:2px;background:transparent;border-left:3px solid rgba(56,211,159,0.08)}
+    .empty{color:#3a4a3a;text-align:center;padding:30px}
+    .send-box{margin-top:auto;display:flex;flex-direction:column;gap:6px}
+    .send-row{display:flex;gap:6px}
+    #msgInput{flex:1;padding:8px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:#e6f5ea;font-size:0.85rem}
+    #sendBtn{padding:8px 12px;border:none;border-radius:6px;background:var(--accent);color:#022;font-weight:600;cursor:pointer;transition:background 0.2s}
+    #sendBtn:hover{background:#2fc58f}
+    #filterInput{margin:6px 8px;padding:6px 10px;width:calc(100% - 16px);border-radius:6px;border:1px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.03);color:#e6f5ea;font-size:0.8rem}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">ST</div>
+        <div><h1>ServoTech</h1><p>SmartMeter — Live</p></div>
+      </div>
+
+      <div>
+        <label class="meta" for="endpointSelect">Device</label>
+        <select id="endpointSelect" disabled></select>
+      </div>
+
+      <div class="send-box">
+        <label class="meta" for="msgInput">Send Message</label>
+        <div class="send-row">
+          <input id="msgInput" type="text" placeholder="Type message…" />
+          <button id="sendBtn">Send</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div id="feedTitle">Selected: <span class="meta">—</span></div>
+        <button id="clearBtn">🧹 Clear Feed</button>
+      </div>
+
+      <input type="text" id="filterInput" placeholder="Filter by endpoint (e.g. SmartMeter_1)" />
+
+      <section class="feed">
+        <div id="messages" class="messages"><div class="empty">No data yet</div></div>
+      </section>
+    </main>
+  </div>
+
+<script>
+const select = document.getElementById('endpointSelect');
+const messagesEl = document.getElementById('messages');
+const feedTitle = document.getElementById('feedTitle');
+const msgInput = document.getElementById('msgInput');
+const sendBtn = document.getElementById('sendBtn');
+const filterInput = document.getElementById('filterInput');
+const clearBtn = document.getElementById('clearBtn');
+
+const history = new Map();
+const MAX_HISTORY = 1000;
+let endpoints = [];
+let selected = null;
+let ws;
+
+// --- Functions ---
+function ensureEndpoint(name) {
+  if (!history.has(name)) history.set(name, []);
+}
+
+function renderSelect(list) {
+  endpoints = Array.isArray(list) ? list.slice() : [];
+  select.innerHTML = '';
+  endpoints.forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = `🔴 ${name}`;
+    select.appendChild(opt);
+    ensureEndpoint(name);
+  });
+  select.disabled = false;
+  selected = endpoints[0] || null;
+  if (selected) select.value = selected;
+  feedTitle.querySelector('.meta').textContent = selected || '—';
+  updateMessagesView();
+}
+
+function appendToHistory(endpoint, text) {
+  ensureEndpoint(endpoint);
+  const arr = history.get(endpoint);
+  arr.push({ text, ts: new Date().toISOString(), endpoint });
+  if (arr.length > MAX_HISTORY) arr.splice(0, arr.length - MAX_HISTORY);
+  renderNewMessage({ text, ts: new Date().toISOString(), endpoint });
+}
+
+function renderNewMessage(item) {
+  const filterText = filterInput.value.toLowerCase();
+  if (item.endpoint !== selected) return;
+  if (filterText && !item.endpoint.toLowerCase().includes(filterText)) return;
+
+  const d = document.createElement('div');
+  d.className = 'msg';
+  d.innerHTML = `<pre>[${escapeHtml(item.endpoint)}] ${escapeHtml(item.text)}</pre>`;
+  messagesEl.appendChild(d);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function updateMessagesView() {
+  messagesEl.innerHTML = '';
+  const arr = history.get(selected) || [];
+  const filterText = filterInput.value.toLowerCase();
+  const filtered = arr.filter(m => !filterText || m.endpoint.toLowerCase().includes(filterText));
+  if (!filtered.length) {
+    messagesEl.innerHTML = '<div class="empty">No data yet</div>';
+    return;
+  }
+  filtered.forEach(renderNewMessage);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, m => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[m]));
+}
+
+// --- Event listeners ---
+sendBtn.addEventListener('click', sendMessage);
+msgInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+filterInput.addEventListener('input', updateMessagesView);
+select.addEventListener('change', () => {
+  selected = select.value;
+  feedTitle.querySelector('.meta').textContent = selected;
+  updateMessagesView();
+});
+clearBtn.addEventListener('click', clearFeed);
+
+function sendMessage() {
+  const text = msgInput.value.trim();
+  if (!text || !selected) return;
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ command: text, endpoint: selected }));
+    appendToHistory(selected, "→ " + text);
+  } else {
+    appendToHistory(selected, "⚠️ WebSocket not connected");
+  }
+  msgInput.value = '';
+}
+
+function clearFeed() {
+  history.forEach(arr => arr.splice(0));
+  messagesEl.innerHTML = '<div class="empty">Feed cleared</div>';
+}
+
+// --- WebSocket ---
+function openWS() {
+  // const url = 'ws://localhost:5632';
+  const url = 'wss://servertest-dgrx.onrender.com';
+  ws = new WebSocket(url);
+
+  ws.onopen = () => console.log(`🟢 WebSocket connected to ${url}`);
+  ws.onclose = (e) => {
+    console.warn(`🔴 WebSocket closed. Code: ${e.code}, Reason: ${e.reason}`);
+    setTimeout(openWS, 3000);
+  };
+  ws.onerror = (err) => console.error("⚠️ WebSocket error:", err);
+
+  ws.onmessage = (evt) => {
+    // console.log("🔹 Message received:", evt.data);
+    try {
+      const obj = JSON.parse(evt.data);
+
+      if (obj.type === "status" && Array.isArray(obj.data)) {
+        Array.from(select.options).forEach(opt => {
+          const ep = obj.data.find(e => e.endpoint === opt.value);
+          opt.textContent = `${ep?.online ? "🟢" : "🔴"} ${opt.value}`;
+        });
+        return;
+      }
+
+      if (obj.endpoint && "body" in obj) {
+        appendToHistory(obj.endpoint, obj.body);
+        return;
+      }
+
+      appendToHistory(selected, JSON.stringify(obj));
+    } catch {
+      appendToHistory(selected, evt.data);
+    }
+  };
+}
+
+// --- INITIAL LOAD ---
+fetch('/endpoints')
+  .then(r => r.json())
+  .then(list => {
+    renderSelect(list); // now renderSelect exists
+    openWS();
+  })
+  .catch(() => {
+    renderSelect([]);
+    openWS();
+  });
+</script>
+
+</body>
+</html>
