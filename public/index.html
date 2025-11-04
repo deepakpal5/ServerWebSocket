@@ -5,99 +5,286 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ServoTech SmartMeter — Live Dashboard</title>
   <style>
-    :root{
-      --bg:#09090b; --panel:#0f1416; --muted:#7fb07f; --accent:#38d39f; --card:#0b0f10; --glass:rgba(255,255,255,0.03);
-      --radius:6px; --gap:10px; --mono:ui-monospace, Menlo, Monaco, 'Roboto Mono', monospace;
+    :root {
+      --bg: #f6f8fa;
+      --panel: #ffffff;
+      --accent: #00b894;
+      --accent2: #00cec9;
+      --border: #e0e0e0;
+      --text: #202225;
+      --muted: #6b7280;
+      --radius: 10px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.06);
+      --mono: ui-monospace, Menlo, Monaco, 'Roboto Mono', monospace;
     }
-    html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#050506);color:#e6f5ea}
-    .app{display:flex;gap:var(--gap);height:100vh;padding:8px;box-sizing:border-box}
-    .sidebar{width:220px;background:linear-gradient(180deg,var(--panel),#071014);border-radius:var(--radius);padding:8px;display:flex;flex-direction:column;gap:12px}
-    .brand{display:flex;align-items:center;gap:10px;padding-bottom:6px;border-bottom:1px solid var(--glass)}
-    .logo{width:40px;height:40px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#0af);display:flex;align-items:center;justify-content:center;font-weight:700;color:#022}
-    .brand h1{font-size:1rem;margin:0;color:#dfffe0}
-    .brand p{margin:0;font-size:0.8rem;color:var(--muted)}
-    label.meta{font-size:0.85rem;color:var(--muted);display:block;margin-bottom:6px}
-    select#endpointSelect {
-      appearance: none;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(56, 211, 159, 0.4);
-      padding: 10px 14px;
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      display: flex;
+      height: 100vh;
+      gap: 16px;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+
+    /* ---- SIDEBAR ---- */
+    .sidebar {
+      width: 260px;
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
       border-radius: 8px;
-      color: #dfffe0;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .brand h1 {
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    .brand p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    label.meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    select#endpointSelect {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
       font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.25s ease-in-out;
-      box-shadow: inset 0 0 6px rgba(56, 211, 159, 0.15);
+      color: var(--text);
       cursor: pointer;
+      transition: border-color 0.2s ease;
+      box-sizing: border-box;
     }
-    select#endpointSelect:hover {
-      background: rgba(56, 211, 159, 0.12);
-      border-color: #38d39f;
-      box-shadow: 0 0 6px rgba(56, 211, 159, 0.35);
-    }
+
     select#endpointSelect:focus {
+      border-color: var(--accent);
       outline: none;
-      background: rgba(56, 211, 159, 0.15);
-      border-color: #38d39f;
-      box-shadow: 0 0 8px rgba(56, 211, 159, 0.45);
-    }
-    select#endpointSelect option {
-      background: #0f1416;
-      color: #dfffe0;
-      font-weight: 500;
     }
 
-    .main{flex:1;display:flex;flex-direction:column;gap:var(--gap)}
-    .topbar{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.05)}
-    .topbar .meta{color:#a0a0a0;font-size:0.85rem}
-    .feed{flex:1;display:flex;flex-direction:column;background:transparent;border-radius:6px;padding:6px}
-    .feed-header{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.05)}
-    .feed-header button {
-      background: rgba(56, 211, 159, 0.12);
-      color: #38d39f;
-      border: 1px solid rgba(56, 211, 159, 0.4);
+    /* ---- MAIN PANEL ---- */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .topbar {
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topbar button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 14px;
       border-radius: 6px;
-      padding: 5px 10px;
       cursor: pointer;
       font-weight: 600;
-      transition: 0.25s;
-    }
-    .feed-header button:hover {
-      background: rgba(56, 211, 159, 0.25);
+      transition: background 0.25s ease;
     }
 
-    .messages{padding:4px 2px;overflow-y:auto;flex:1;font-family:var(--mono);font-size:0.68rem;color:#cfe9d0}
-    .messages pre{font-size:0.68rem;line-height:1.05;margin:0}
-    .msg{padding:4px;border-radius:4px;margin-bottom:2px;background:transparent;border-left:3px solid rgba(56,211,159,0.08)}
-    .empty{color:#3a4a3a;text-align:center;padding:30px}
-    .send-box{margin-top:auto;display:flex;flex-direction:column;gap:6px}
-    .send-row{display:flex;gap:6px}
-    #msgInput{flex:1;padding:8px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:#e6f5ea;font-size:0.85rem}
-    #sendBtn{padding:8px 12px;border:none;border-radius:6px;background:var(--accent);color:#022;font-weight:600;cursor:pointer;transition:background 0.2s}
-    #sendBtn:hover{background:#2fc58f}
-    #filterInput{margin:6px 8px;padding:6px 10px;width:calc(100% - 16px);border-radius:6px;border:1px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.03);color:#e6f5ea;font-size:0.8rem}
+    .topbar button:hover {
+      background: #00a884;
+    }
+
+    #filterInput {
+      margin: 0 4px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      box-shadow: var(--shadow);
+    }
+
+    #filterInput:focus {
+      border-color: var(--accent);
+    }
+
+    /* ---- FEED ---- */
+    .feed {
+      flex: 1;
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #fdfdfd;
+      padding: 10px;
+      font-family: var(--mono);
+      scrollbar-width: thin;
+    }
+
+    .msg {
+      border-left: 4px solid var(--accent);
+      background: #fff;
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: transform 0.15s ease;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(6px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    .msg:hover {
+      transform: translateY(-2px);
+    }
+
+    .msg pre {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #333;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 20px;
+      font-size: 0.9rem;
+    }
+
+    /* ---- SEND BOX ---- */
+    .send-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+
+    #msgInput {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    #msgInput:focus {
+      border-color: var(--accent);
+    }
+
+    #sendBtn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(45deg, var(--accent), var(--accent2));
+      color: white;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    #sendBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.1);
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
   <div class="app">
     <aside class="sidebar">
-      <div class="brand">
-        <div class="logo">ST</div>
-        <div><h1>ServoTech</h1><p>SmartMeter — Live</p></div>
-      </div>
-
       <div>
-        <label class="meta" for="endpointSelect">Device</label>
-        <select id="endpointSelect" disabled></select>
+        <div class="brand">
+          <div class="logo">ST</div>
+          <div><h1>ServoTech</h1><p>SmartMeter — Live</p></div>
+        </div>
+
+        <div>
+          <label class="meta" for="endpointSelect">Device</label>
+          <select id="endpointSelect" disabled></select>
+        </div>
       </div>
 
       <div class="send-box">
         <label class="meta" for="msgInput">Send Message</label>
-        <div class="send-row">
-          <input id="msgInput" type="text" placeholder="Type message…" />
-          <button id="sendBtn">Send</button>
-        </div>
+        <input id="msgInput" type="text" placeholder="Type message…" />
+        <button id="sendBtn">Send</button>
       </div>
     </aside>
 
@@ -110,12 +297,16 @@
       <input type="text" id="filterInput" placeholder="Filter by endpoint (e.g. SmartMeter_1)" />
 
       <section class="feed">
-        <div id="messages" class="messages"><div class="empty">No data yet</div></div>
+        <div id="messages" class="messages">
+          <div class="empty">No data yet</div>
+        </div>
       </section>
     </main>
   </div>
 
-<script>
+  <!-- ✅ Keep your original JavaScript logic -->
+  <script>
+    
 const select = document.getElementById('endpointSelect');
 const messagesEl = document.getElementById('messages');
 const feedTitle = document.getElementById('feedTitle');
@@ -269,7 +460,6 @@ fetch('/endpoints')
     renderSelect([]);
     openWS();
   });
-</script>
-
+  </script>
 </body>
 </html>
