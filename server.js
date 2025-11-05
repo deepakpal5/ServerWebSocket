@@ -66,7 +66,7 @@ wss.on("connection", (ws, req) => {
               body: msg.toString(),
               ts: new Date().toISOString(),
             });
-      console.log(`📥 Received from ${endpoint}: ${magDasghboard.toString()}`);
+      // console.log(`📥 Received from ${endpoint}: ${magDasghboard.toString()}`);
       dashboards.forEach((dash) => {
         if (dash.readyState === 1) {
           dash.send(magDasghboard);
