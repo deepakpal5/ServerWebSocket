@@ -167,8 +167,8 @@ if(data.Battery_Status.toLowerCase() === "charging"){
   document.getElementById("loadSource").textContent = data.Load_Source;
   document.getElementById("gridCharge").textContent = data.Grid_Charging;
   document.getElementById("upsMode").textContent = data.UPS_Mode;
-  document.getElementById("lcdUpper").textContent = "Upper: " + data.Upper;
-document.getElementById("lcdLower").textContent = "Lower: " + data.Lower;
+  document.getElementById("lcdUpper").textContent = data.Upper;
+document.getElementById("lcdLower").textContent =  data.Lower;
 
 
 
