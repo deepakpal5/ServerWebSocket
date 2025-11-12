@@ -8,33 +8,37 @@
 </head>
 <body>
 <div class="app">
+
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div>
       <div class="brand">
         <div class="logo">ST</div>
         <div><h1>Servotech</h1><p>SmartMeter Live</p></div>
       </div>
+
       <label class="meta" for="endpointSelect">Device</label>
       <select id="endpointSelect" disabled></select>
-    </div>
 
-    <div class="send-box">
-      <label class="meta">Controls</label>
-      <div class="control-buttons">
-        <button id="changeBtn" title="Change">⚙️</button>
-        <button id="powerBtn" title="Power">🔌</button>
-        <button id="resetBtn" title="Reset">🔄</button>
-        <button id="menuBtn" title="Menu">📋</button>
+      <div class="send-box">
+        <label class="meta">Controls</label>
+        <div class="control-buttons">
+          <button id="CHANGEBtn" title="Change">⚙️</button>
+          <button id="POWERBtn" title="Power">🔌</button>
+          <button id="RESETBtn" title="Reset">🔄</button>
+          <button id="MENUBtn" title="Menu">📋</button>
+        </div>
       </div>
-    </div>
 
-    <div class="send-box">
-      <label class="meta" for="msgInput">Send Message</label>
-      <input id="msgInput" type="text" placeholder="Type message…" />
-      <button id="sendBtn">Send</button>
+      <div class="send-box">
+        <label class="meta" for="msgInput">Send Message</label>
+        <input id="msgInput" type="text" placeholder="Type message…" />
+        <button id="sendBtn">Send</button>
+      </div>
     </div>
   </aside>
 
+  <!-- Main Dashboard -->
   <main class="main">
     <div class="topbar">
       <div id="feedTitle">Selected: <span class="meta">—</span></div>
@@ -43,27 +47,72 @@
 
     <section class="feed">
       <div class="gauges">
-        <div>
+<p>PV Status: <span id="pvStatus">—</span></p>
+<p>Main Status: <span id="mainStatus">—</span></p>
+        <!-- PV Input -->
+        <div class="gauge-card pv-gauge">
           <svg width="120" height="120" viewBox="0 0 36 36">
-            <path d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none" stroke="#eee" stroke-width="2.5" />
-            <path id="voltageArc" d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none" stroke="#00b894" stroke-width="2.5" stroke-dasharray="0,100" stroke-linecap="round" />
-            <text x="18" y="20" font-size="4" text-anchor="middle" fill="#333" id="voltageLabel">0V</text>
+            <path class="bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+            <path id="pvArc" class="fg" stroke-dasharray="0,100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+            <text x="18" y="20" font-size="5" text-anchor="middle" fill="#333" id="pvLabel">0</text>
           </svg>
-          <div>Voltage</div>
+          <h3>Solar Voltage</h3>
         </div>
-        <div>
-          <svg width="120" height="120" viewBox="0 0 36 36">
-            <path d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none" stroke="#eee" stroke-width="2.5" />
-            <path id="currentArc" d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none" stroke="#0984e3" stroke-width="2.5" stroke-dasharray="0,100" stroke-linecap="round" />
-            <text x="18" y="20" font-size="4" text-anchor="middle" fill="#333" id="currentLabel">0A</text>
-          </svg>
-          <div>Current</div>
+
+        <!-- Input Voltage/Current -->
+        <div class="gauge-card">
+          <h3>Input Voltage</h3>
+          <div class="linear-bar"><span id="inputVoltBar"></span></div>
+          <p id="inputVoltLabel">0V</p>
+          <h3>Input Frequency</h3>
+          <div class="linear-bar"><span id="inputFreqBar"></span></div>
+          <p id="inputFreqLabel">0Hz</p>
         </div>
+
+        <!-- Output Voltage/Load -->
+        <div class="gauge-card">
+          <h3>Output Voltage</h3>
+          <div class="linear-bar"><span id="outVoltBar"></span></div>
+          <p id="outVoltLabel">0V</p>
+          <h3>Output Load</h3>
+          <div class="bar-graph" id="loadBars">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          </div>
+          <p id="outLoadLabel">0%</p>
+        </div>
+
+        <!-- Battery -->
+        <div class="gauge-card">
+          <h3>Battery</h3>
+          <div class="battery"><div class="charge" id="battCharge"></div></div>
+          <p id="battVoltLabel">0V</p>
+          <p id="battStatus">Idle</p>
+        </div>
+
+        <!-- Status -->
+        <div class="gauge-card">
+          <h3>System Status</h3>
+          <p>Charging Mode: <span id="chargeMode">-</span></p>
+          <p>Battery Type: <span id="battType">-</span></p>
+          <p>Load Source: <span id="loadSource">-</span></p>
+          <p>Grid Charging: <span id="gridCharge">-</span></p>
+          <p>UPS Mode: <span id="upsMode">-</span></p>
+        </div>
+
+        <!-- Fault -->
+        <div class="gauge-card" id="faultCard">
+          <h3>Fault Status</h3>
+          <div id="faultMsg">No Faults</div>
+        </div>
+
+<div class="lcd-box">
+  <div class="lcd-line" id="lcdUpper">Upper: —</div>
+  <div class="lcd-line" id="lcdLower">Lower: —</div>
+</div>
+
+
       </div>
+      <div id="timestamp">Last updated: —</div>
     </section>
   </main>
 </div>
