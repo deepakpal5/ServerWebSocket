@@ -131,10 +131,73 @@ function openWS(){
 }
 
 
+
+
+let pvCurrent = 0; // store previous value for animation
+
+function updateSolarGauge(value) {
+  const pvArc = document.getElementById("pvArc");
+  const pvLabel = document.getElementById("pvLabel");
+
+  // Handle missing / invalid data
+  if (value == null || isNaN(value)) {
+    pvArc.setAttribute("class", "fg inactive");
+    pvArc.setAttribute("stroke-dasharray", "0,100");
+    pvLabel.textContent = "-- Volt";
+    pvLabel.style.fill = "#999";
+    pvCurrent = 0;
+    return;
+  }
+
+  // Clamp value (for example, assume max 24V)
+  const maxVolt = 24;
+  const newPercent = Math.min((value / maxVolt) * 100, 100);
+
+  pvArc.setAttribute("class", "fg active");
+  pvLabel.style.fill = "#00b894";
+
+  // Animate from old → new
+  const duration = 800; // ms
+  const start = pvCurrent;
+  const end = newPercent;
+  const startTime = performance.now();
+
+  function animateGauge(now) {
+    const progress = Math.min((now - startTime) / duration, 1);
+    const eased = start + (end - start) * progress;
+    pvArc.setAttribute("stroke-dasharray", `${eased.toFixed(1)},100`);
+    pvLabel.textContent = `${value.toFixed(1)} Volt`;
+
+    if (progress < 1) {
+      requestAnimationFrame(animateGauge);
+    } else {
+      pvCurrent = end;
+    }
+  }
+
+  requestAnimationFrame(animateGauge);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 // --- Existing UI update ---
 function updateUI(data){
-  document.getElementById("pvLabel").textContent = (data.Solar_Volt) + "Volt";
-  document.getElementById("pvArc").setAttribute("stroke-dasharray", `${data.Solar_Volt},400`);
+  // document.getElementById("pvLabel").textContent = (data.Solar_Volt) + "Volt";
+  // document.getElementById("pvArc").setAttribute("stroke-dasharray", `${data.Solar_Volt},400`);
+
+
+
+
+  updateSolarGauge(parseFloat(data.Solar_Volt));
 
   document.getElementById("inputVoltBar").style.width = (data.Input_VOLT/240*100) + "%";
   document.getElementById("inputVoltLabel").textContent = data.Input_VOLT + "V";
@@ -145,13 +208,25 @@ function updateUI(data){
   document.getElementById("outVoltBar").style.width = (data.Output_VOLT/240*100) + "%";
   document.getElementById("outVoltLabel").textContent = data.Output_VOLT + "V";
 
+
+  document.getElementById("outputFreqBar").style.width = (data.Output_FREQ/60*100) + "%";
+  document.getElementById("outputFreqLabel").textContent = data.Output_FREQ + "Hz";
+
+
+
   document.querySelectorAll("#loadBars .bar").forEach(bar=>{
     bar.style.height = (Math.random()*data.Output_LOAD) + "%";
   });
   document.getElementById("outLoadLabel").textContent = data.Output_LOAD + "%";
 
   const batteryEl = document.getElementById("battCharge").parentElement; // .battery container
+
+
+
 document.getElementById("battCharge").style.width = Math.min(parseFloat(data.Battery_Connect)/14*100,100) + "%";
+
+
+
 document.getElementById("battVoltLabel").textContent = data.Battery_Connect;
 document.getElementById("battStatus").textContent = data.Battery_Status;
 
@@ -163,12 +238,12 @@ if(data.Battery_Status.toLowerCase() === "charging"){
 }
 
   document.getElementById("chargeMode").textContent = data.Charging_Mode;
-  document.getElementById("battType").textContent = data.Battery_Type;
+  document.getElementById("battType").textContent =   data.Battery_Type;
   document.getElementById("loadSource").textContent = data.Load_Source;
   document.getElementById("gridCharge").textContent = data.Grid_Charging;
-  document.getElementById("upsMode").textContent = data.UPS_Mode;
-  document.getElementById("lcdUpper").textContent = "Upper: " + data.Upper;
-document.getElementById("lcdLower").textContent = "Lower: " + data.Lower;
+  document.getElementById("upsMode").textContent =    data.UPS_Mode;
+  document.getElementById("lcdUpper").textContent =   data.Upper;
+  document.getElementById("lcdLower").textContent =   data.Lower;
 
 
 

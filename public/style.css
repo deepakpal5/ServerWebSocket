@@ -39,14 +39,14 @@ select, input { width: 100%; padding: 0.4rem; border-radius: 4px; border: none; 
 
 /* Main Area */
 .main { flex: 1; display: flex; flex-direction: column; background: #fff; }
-.topbar { display: flex; justify-content: space-between; align-items: center; background: #e9ecef; padding: 0.75rem 1rem; border-bottom: 1px solid #ccc; }
+.topbar { display: flex; justify-content: space-between; align-items: center; background: #e9ecef; padding: 0.5rem 1rem; border-bottom: 1px solid #ccc; }
 
-.feed { flex: 1; padding: 1.5rem; overflow-y: auto; position: relative; }
-.gauges { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+.feed { flex: 1; padding: 1.0rem; overflow-y: auto; position: relative; }
+.gauges { display: grid; grid-template-columns: repeat(4, minmax(200px, 1fr)); gap: 1.0rem; }
 
 .gauge-card {
   background: #f8fafc;
-  border-radius: 12px;
+  border-radius: 5px;
   padding: 1.2rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   text-align: center;
@@ -67,13 +67,79 @@ select, input { width: 100%; padding: 0.4rem; border-radius: 4px; border: none; 
   animation: chargeAnimation 2s linear infinite;
 }
 
+.battery-info {
+  display: flex;           /* make children appear in a row */
+  justify-content: center; /* center them horizontally */
+  gap: 10px;               /* spacing between label and value */
+  margin-top: 10px;        /* optional spacing from above */
+}
+
+.batt-label,
+.batt-value {
+  margin: 0;               /* remove default <p> margins */
+  font-weight: bold;       /* optional styling */
+}
 
 
 
 
 
-.pv-gauge svg path.bg { stroke: #eee; }
-.pv-gauge svg path.fg { stroke-width: 3; stroke: #00b894; fill: none; stroke-linecap: round; transition: stroke-dasharray 0.5s ease; }
+.pv-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.pv-gauge svg {
+  width: 100px;
+  height: 100px;
+}
+
+.pv-gauge svg path.bg {
+  stroke: #e0e0e0; /* Light gray background circle */
+  fill: transparent;
+  stroke-width: 3;
+}
+
+.pv-gauge svg path.fg {
+  stroke-width: 3.5;
+  fill: transparent;
+  stroke-linecap: round;
+  stroke-dasharray: 0, 100;
+  transition: stroke-dasharray 1s ease, stroke 0.3s ease;
+}
+
+/* Default inactive state (gray, no data) */
+.pv-gauge svg path.fg.inactive {
+  stroke: #bdbdbd;
+}
+
+/* Active (value available) — uses gradient */
+.pv-gauge svg path.fg.active {
+  stroke: url(#pvGradient);
+  filter: drop-shadow(0 0 4px rgba(0, 184, 148, 0.5));
+}
+
+.pv-gauge text {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  fill: #333;
+}
+
+.pv-gauge h3 {
+  margin-top: 10px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  color: #333;
+  text-align: center;
+}
+
 
 .linear-bar { background: #ddd; border-radius: 6px; overflow: hidden; height: 12px; margin-top: 8px; }
 .linear-bar span { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, #0984e3, #00b894); transition: width 0.4s ease; }
@@ -84,21 +150,37 @@ select, input { width: 100%; padding: 0.4rem; border-radius: 4px; border: none; 
 
 .bar-graph { height: 100px; display: flex; align-items: flex-end; justify-content: space-around; }
 .bar { width: 20px; background: #0984e3; border-radius: 3px 3px 0 0; transition: height 0.3s ease; }
+
+
+
+
+.lcd-module {
+  display: inline-block;
+  padding: 10px;
+  background-color: #222;
+  border: 4px solid rgb(0, 94, 170);
+  border-radius: 10px;
+}
+
 .lcd-box {
   width: 200px;
   background-color: #111;
   color: #0f0;
   font-family: 'Courier New', monospace;
-  padding: 8px;
-  border-radius: 5px;
-  margin-bottom: 15px;
+  padding: 10px;
+  border: 3px solid #f00; 
+  border-radius: 6px;
+  margin: auto auto; 
+  margin-bottom: 20px;
   text-align: center;
 }
+
 
 .lcd-line {
   height: 20px;
   line-height: 20px;
-  font-size: 14px;
+  font-size: 18px;
+  letter-spacing: 2px; /* Mimics LCD character spacing */
 }
 
 .fault { background: #ffdddd; border-left: 4px solid red; color: #a00; padding: 0.5rem; border-radius: 6px; font-weight: 600; animation: blink 1s infinite alternate; }
