@@ -213,6 +213,27 @@ function updateUI(data){
   document.getElementById("outputFreqLabel").textContent = data.Output_FREQ + "Hz";
 
 
+  
+
+
+  document.getElementById("battVoltBar").style.width = (data.Batt_VOLT/65*100) + "%";
+  document.getElementById("battVolt").textContent = data.Batt_VOLT + " Volt";
+
+  document.getElementById("battCurrBar").style.width = (data.Charge_CURR/65*100) + "%";
+  document.getElementById("battCurr").textContent = data.Charge_CURR + " Amp";
+
+
+
+  document.getElementById("inputFreqBar").style.width = (data.Input_FREQ/60*100) + "%";
+  document.getElementById("inputFreqLabel").textContent = data.Input_FREQ + "Hz";
+
+
+
+
+
+document.getElementById("solarMode").textContent = data.Solar_Mode;
+document.getElementById("pcuSwitch").textContent = data.PCU_Switch;
+
 
   document.querySelectorAll("#loadBars .bar").forEach(bar=>{
     bar.style.height = (Math.random()*data.Output_LOAD) + "%";

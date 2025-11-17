@@ -175,16 +175,29 @@
 
 
 
+        <div class="gauge-card">
+          <h3>Battery Voltage</h3>
+          <div class="linear-bar"><span id="battVoltBar"></span></div>
+          <p id="battVolt">00.0 V</p>
+          <h3>Charge Current</h3>
+          <div class="linear-bar"><span id="battCurrBar"></span></div>
+          <p id="battCurr">0 Amp</p>
+        </div>
+
+
 
         <div class="gauge-card">
           <h3>Battery</h3>
           <div class="battery"><div class="charge" id="battCharge"></div></div>
           <p id="battStatus">Idle</p>
+
           <div class="battery-info">
   <p class="batt-label">Batt Label Volt</p>
   <p id="battVoltLabel" class="batt-value">0V</p>
 </div>
+       
 
+  
           
         </div>
 
@@ -195,9 +208,15 @@
           <p>Battery Type: <span id="battType">-</span></p>
           <p>Load Source: <span id="loadSource">-</span></p>
           <p>Grid Charging: <span id="gridCharge">-</span></p>
-          <p>UPS Mode: <span id="upsMode">-</span></p>
         </div>
 
+                <!-- Status -->
+        <div class="gauge-card">
+          <h3>System Status </h3>
+          <p>UPS Mode: <span id="upsMode">-</span></p>
+          <p>Solar Mode: <span id="solarMode">-</span></p>
+          <p>PCU Switch: <span id="pcuSwitch">-</span></p>
+        </div>
         <!-- Fault -->
         <div class="gauge-card" id="faultCard">
           <h3>Fault Status</h3>

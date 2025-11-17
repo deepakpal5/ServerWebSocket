@@ -42,7 +42,7 @@ select, input { width: 100%; padding: 0.4rem; border-radius: 4px; border: none; 
 .topbar { display: flex; justify-content: space-between; align-items: center; background: #e9ecef; padding: 0.5rem 1rem; border-bottom: 1px solid #ccc; }
 
 .feed { flex: 1; padding: 1.0rem; overflow-y: auto; position: relative; }
-.gauges { display: grid; grid-template-columns: repeat(4, minmax(200px, 1fr)); gap: 1.0rem; }
+.gauges { display: grid; grid-template-columns: repeat(5, minmax(200px, 1fr)); gap: 1.0rem; }
 
 .gauge-card {
   background: #f8fafc;
