@@ -41,6 +41,8 @@ wss.on("connection", (ws, req) => {
     ws.endpoint = endpoint;
     devices.set(endpoint, ws);
     deviceLastSeen.set(endpoint, Date.now());
+    console.log("Active devices:", Array.from(devices.keys()));
+
 
     console.log(`✅ Device connected → ${endpoint}`);
     broadcastStatus();
@@ -81,6 +83,7 @@ const obj = JSON.parse(msg);
     const command = obj.command || msg.toString();
 
         const target = devices.get(obj.endpoint);
+console.log("Current device list:", Array.from(devices.keys()));
 
 console.log(`Trying to send to ${endpoint}: ${command} & ${target}`);
 
