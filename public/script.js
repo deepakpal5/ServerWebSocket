@@ -137,7 +137,7 @@ function updateSolarGauge(value) {
     const progress = Math.min((now - startTime) / duration, 1);
     const eased = start + (end - start) * progress;
     pvArc.setAttribute("stroke-dasharray", `${eased.toFixed(1)},100`);
-    pvLabel.textContent = `${value.toFixed(1)} Volt`;
+    pvLabel.textContent = `${value.toFixed(1)}`;
 
     if (progress < 1) {
       requestAnimationFrame(animateGauge);
