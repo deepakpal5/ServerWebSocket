@@ -12,35 +12,6 @@ function ensureEndpoint(name) {
   if (!history.has(name)) history.set(name, []);
 }
 
-// function appendToHistory(endpoint, text) {
-//   ensureEndpoint(endpoint);
-//   const msg = { text, ts: new Date().toISOString(), endpoint };
-//   history.get(endpoint).push(msg);
-//   renderNewMessage(msg);
-// }
-
-// function renderNewMessage(item) {
-//   // Create message element
-//   const div = document.createElement('div');
-//   div.className = 'message';
-//   div.innerHTML = `<span class="time">${new Date(item.ts).toLocaleTimeString()}</span>
-//                    <span class="endpoint">${item.endpoint}</span>
-//                    <span class="text">${item.text}</span>`;
-//   if(messagesEl.querySelector('.empty')) messagesEl.innerHTML = '';
-//   messagesEl.appendChild(div);
-//   messagesEl.scrollTop = messagesEl.scrollHeight;
-
-//   // Update gauges if the message is from selected endpoint
-//   if (item.endpoint === selected) {
-//     let data = item.text;
-//     if (typeof data === 'string' && (data.startsWith('{') || data.startsWith('['))) {
-//       try { data = JSON.parse(data); } catch {}
-//     }
-//     if(data.voltage !== undefined && data.current !== undefined) {
-//       updateGauges(data.voltage, data.current);
-//     }
-//   }
-// }
 
 function sendMessage() {
   const text = msgInput.value.trim();
@@ -143,7 +114,7 @@ function updateSolarGauge(value) {
   if (value == null || isNaN(value)) {
     pvArc.setAttribute("class", "fg inactive");
     pvArc.setAttribute("stroke-dasharray", "0,100");
-    pvLabel.textContent = "-- Volt";
+    pvLabel.textContent = "--";
     pvLabel.style.fill = "#999";
     pvCurrent = 0;
     return;
@@ -238,7 +209,7 @@ document.getElementById("pcuSwitch").textContent = data.PCU_Switch;
   document.querySelectorAll("#loadBars .bar").forEach(bar=>{
     bar.style.height = (Math.random()*data.Output_LOAD) + "%";
   });
-  document.getElementById("outLoadLabel").textContent = data.Output_LOAD + "%";
+  document.getElementById("outLoadLabel").textContent = data.Output_LOAD;
 
   const batteryEl = document.getElementById("battCharge").parentElement; // .battery container
 

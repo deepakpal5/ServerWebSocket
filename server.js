@@ -75,10 +75,19 @@ wss.on("connection", (ws, req) => {
     } else {
       // Dashboard → Device
       try {
-        const obj = JSON.parse(msg);
+
+const obj = JSON.parse(msg);
+    const endpoint = obj.endpoint;
+    const command = obj.command || msg.toString();
+
         const target = devices.get(obj.endpoint);
+
+console.log(`Trying to send to ${endpoint}: ${command} & ${target}`);
+
+
+
         if (target && target.readyState === 1) {
-          target.send(obj.command || msg.toString());
+          target.send(command);
           console.log(`📤 Sent to ${obj.endpoint}: ${obj.command}`);
         } else {
           console.log(`⚠️ No active device found for ${obj.endpoint}`);
