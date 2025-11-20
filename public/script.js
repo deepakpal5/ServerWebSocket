@@ -2,32 +2,13 @@ let history = new Map(), ws, endpoints = [], selected = null;
 
 const select = document.getElementById('endpointSelect');
 const feedTitle = document.getElementById('feedTitle');
-const msgInput = document.getElementById('msgInput');
-const sendBtn = document.getElementById('sendBtn');
-const clearBtn = document.getElementById('clearBtn');
-const messagesEl = document.getElementById('messages');
 
-// --- Helpers ---
 function ensureEndpoint(name) {
   if (!history.has(name)) history.set(name, []);
 }
 
 
-function sendMessage() {
-  const text = msgInput.value.trim();
-  if (!text || !selected) return;
 
-  if (ws && ws.readyState === WebSocket.OPEN) {
-    console.log("Sending message:", text, "to", selected);
-    ws.send(JSON.stringify({ command: text, endpoint: selected }));
-    // appendToHistory(selected, "→ " + text);
-  } 
-  // else {
-  //   appendToHistory(selected, "⚠️ WebSocket not connected");
-  // }
-
-  msgInput.value = '';
-}
 
 function renderSelect(list) {
   select.innerHTML = '';
@@ -50,23 +31,35 @@ select.addEventListener('change', ()=> {
   feedTitle.querySelector('.meta').textContent = selected;
 });
 
-sendBtn.addEventListener('click', sendMessage);
-msgInput.addEventListener('keypress', e => { if(e.key==='Enter') sendMessage(); });
 
-clearBtn.addEventListener('click', ()=> {
-  messagesEl.innerHTML = '<div class="empty">Feed cleared</div>';
-  history.clear();
-});
 
-['CHANGE','POWER','RESET','MENU'].forEach(cmd=>{
-  const btn = document.getElementById(cmd+'Btn');
-  if(btn) btn.addEventListener('click', ()=> {
-    if(ws && ws.readyState === WebSocket.OPEN && selected){
-      console.log("Sending message:", cmd, "to", selected); // <- changed 'text' to 'cmd'
-      ws.send(JSON.stringify({ command: cmd, endpoint: selected }));
-    }
+
+['CHANGE', 'POWER', 'RESET', 'MENU'].forEach(cmd => {
+  const btn = document.getElementById(cmd + 'Btn');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    if (!ws || ws.readyState !== WebSocket.OPEN || !selected) return;
+
+    const payload = {
+      Status: true,
+      Command: cmd
+    };
+
+    console.log("📤 Dashboard sending:", payload);
+
+    ws.send(JSON.stringify({
+      endpoint: selected,
+      command: JSON.stringify(payload)  
+    }));
   });
 });
+
+
+
+
+
+
 
 
 // --- WebSocket ---
@@ -94,6 +87,9 @@ function openWS(){
         const data = typeof obj.body === "string" ? JSON.parse(obj.body) : obj.body;
         // console.log("Data received for", obj.endpoint, data);
         updateUI(data);
+
+  
+
       }
     }catch(err){
       console.error("Parse error:", err);
@@ -162,9 +158,6 @@ function updateSolarGauge(value) {
 
 // --- Existing UI update ---
 function updateUI(data){
-  // document.getElementById("pvLabel").textContent = (data.Solar_Volt) + "Volt";
-  // document.getElementById("pvArc").setAttribute("stroke-dasharray", `${data.Solar_Volt},400`);
-
 
 
 

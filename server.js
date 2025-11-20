@@ -80,12 +80,12 @@ wss.on("connection", (ws, req) => {
 
 const obj = JSON.parse(msg);
     const endpoint = obj.endpoint;
-    const command = obj.command || msg.toString();
+    const command = obj.command ;
 
         const target = devices.get(obj.endpoint);
-console.log("Current device list:", Array.from(devices.keys()));
+// console.log("Current device list:", Array.from(devices.keys()));
 
-console.log(`Trying to send to ${endpoint}: ${command} & ${target}`);
+// console.log(`Trying to send to ${endpoint}: ${command} & ${target}`);
 
 
 
@@ -115,22 +115,6 @@ console.log(`Trying to send to ${endpoint}: ${command} & ${target}`);
   });
 });
 
-// ---- Periodic check for timeout ----
-setInterval(() => {
-  const now = Date.now();
-  let statusChanged = false;
-
-  for (const [endpoint, last] of deviceLastSeen.entries()) {
-    if (now - last > DEVICE_TIMEOUT) {
-      console.log(`⚠️ Device timeout: ${endpoint}`);
-      deviceLastSeen.delete(endpoint);
-      devices.delete(endpoint);
-      statusChanged = true;
-    }
-  }
-
-  if (statusChanged) broadcastStatus();
-}, 3000);
 
 // ---- Send status to one dashboard ----
 function sendStatus(ws) {
