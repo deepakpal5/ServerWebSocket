@@ -213,12 +213,12 @@ if(data.Battery_Status.toLowerCase() === "charging"){
 const pvStatusEl = document.getElementById("pvStatus");
 
 
-if(data.PVA){
+if(!data.PVA){
   pvStatusEl.textContent = "Unavailable";
   pvStatusEl.style.color = "red";
 } 
 
-else if(!data.PVA && !data.PVR){
+else if(data.PVA && data.PVR){
   pvStatusEl.textContent = "ok";
   pvStatusEl.style.color = "green";
 } 
