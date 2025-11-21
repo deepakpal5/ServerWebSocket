@@ -100,112 +100,41 @@ function openWS(){
 
 
 
-let pvCurrent = 0; // store previous value for animation
+function updateSolarGauge( value) {
+    
 
-function updateSolarGauge(value) {
-  const pvArc = document.getElementById("pvArc");
-  const pvLabel = document.getElementById("pvLabel");
+    const angle = ( value/ 30) * 360;
+    const gauge = document.getElementById("SolarAnglegauge");
+    const valueText = document.getElementById("SolarTextgaugeValue");
 
-  // Handle missing / invalid data
-  if (value == null || isNaN(value)) {
-    pvArc.setAttribute("class", "fg inactive");
-    pvArc.setAttribute("stroke-dasharray", "0,100");
-    pvLabel.textContent = "--";
-    pvLabel.style.fill = "#999";
-    pvCurrent = 0;
-    return;
+   
+    gauge.style.background = `conic-gradient(#00b894 ${angle}deg, #ddd ${angle}deg)`;
+
+  
+    valueText.textContent = value + " Amp";
+
+  
+
   }
 
-  // Clamp value (for example, assume max 24V)
-  const maxVolt = 24;
-  const newPercent = Math.min((value / maxVolt) * 100, 100);
+function updateLOADGauge( value) {
+    
 
-  pvArc.setAttribute("class", "fg active");
-  pvLabel.style.fill = "#00b894";
+    const angle = ( value/ 120) * 360;
+    const gauge = document.getElementById("loadAnglegauge");
+    const valueText = document.getElementById("loadTextgaugeValue");
 
-  // Animate from old → new
-  const duration = 800; // ms
-  const start = pvCurrent;
-  const end = newPercent;
-  const startTime = performance.now();
+   
+    gauge.style.background = `conic-gradient(#00b894 ${angle}deg, #ddd ${angle}deg)`;
 
-  function animateGauge(now) {
-    const progress = Math.min((now - startTime) / duration, 1);
-    const eased = start + (end - start) * progress;
-    pvArc.setAttribute("stroke-dasharray", `${eased.toFixed(1)},100`);
-    pvLabel.textContent = `${value.toFixed(1)}`;
+  
+    valueText.textContent = value + " %";
 
-    if (progress < 1) {
-      requestAnimationFrame(animateGauge);
-    } else {
-      pvCurrent = end;
-    }
+  
+
   }
 
-  requestAnimationFrame(animateGauge);
-}
 
-
-
-
-let loadCurrent = 0;   // keep animation state
-
-function updateLOADGauge(value) {
-  const loadArc = document.getElementById("loadArc");
-  const loadLabel = document.getElementById("loadLabel");
-
-  // Handle missing / invalid data
-  if (value == null || isNaN(value)) {
-    loadArc.setAttribute("class", "fg inactive");
-    loadArc.setAttribute("stroke-dasharray", "0,100");
-    loadLabel.textContent = "--";
-    loadLabel.style.fill = "#999";
-    loadCurrent = 0;
-    return;
-  }
-
-  // Clamp value (assuming max 100% load or adjust as needed)
-  const maxLoad = 100;  
-  const newPercent = Math.min((value / maxLoad) * 100, 100);
-
-  loadArc.setAttribute("class", "fg active");
-  loadLabel.style.fill = "#0984e3"; // blue color for load
-
-  // Animation
-  const duration = 800;
-  const start = loadCurrent;
-  const end = newPercent;
-  const startTime = performance.now();
-
-  function animateGauge(now) {
-    const progress = Math.min((now - startTime) / duration, 1);
-    const eased = start + (end - start) * progress;
-
-    loadArc.setAttribute("stroke-dasharray", `${eased.toFixed(1)},100`);
-    loadLabel.textContent = `${value.toFixed(1)}`;
-
-    if (progress < 1) {
-      requestAnimationFrame(animateGauge);
-    } else {
-      loadCurrent = end;
-    }
-  }
-
-  requestAnimationFrame(animateGauge);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-// --- Existing UI update ---
 function updateUI(data){
 
 
@@ -284,12 +213,12 @@ if(data.Battery_Status.toLowerCase() === "charging"){
 const pvStatusEl = document.getElementById("pvStatus");
 
 
-if(!data.PVA){
+if(data.PVA){
   pvStatusEl.textContent = "Unavailable";
   pvStatusEl.style.color = "red";
 } 
 
-else if(data.PVA && data.PVR){
+else if(!data.PVA && !data.PVR){
   pvStatusEl.textContent = "ok";
   pvStatusEl.style.color = "green";
 } 
