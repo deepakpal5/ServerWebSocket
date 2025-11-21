@@ -213,20 +213,22 @@ if(data.Battery_Status.toLowerCase() === "charging"){
 const pvStatusEl = document.getElementById("pvStatus");
 
 
-if(!data.PVA){
+if(data.PVA){
   pvStatusEl.textContent = "Unavailable";
   pvStatusEl.style.color = "red";
 } 
 
-else if(data.PVA && data.PVR){
+else if (!data.PVR) {
+  pvStatusEl.textContent = "Reverse Polarity";
+  pvStatusEl.style.color = "red";
+}
+
+else {
   pvStatusEl.textContent = "ok";
   pvStatusEl.style.color = "green";
 } 
 
-else {
-  pvStatusEl.textContent = "Reverse Polarity";
-  pvStatusEl.style.color = "red";
-}
+
 
 const mainEl = document.getElementById("mainStatus");
 mainEl.textContent = data.Mains;
