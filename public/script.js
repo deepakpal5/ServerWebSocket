@@ -208,11 +208,6 @@ function updateLOADGauge(value) {
 // --- Existing UI update ---
 function updateUI(data){
 
-  document.querySelectorAll("#loadBars .bar").forEach(bar=>{
-    bar.style.height = (Math.random()*data.Output_LOAD) + "%";
-  });
-  document.getElementById("outLoadLabel").textContent = ;
-
 
 
 updateLOADGauge(data.Output_LOAD)
@@ -287,19 +282,19 @@ if(data.Battery_Status.toLowerCase() === "charging"){
 
 
 const pvStatusEl = document.getElementById("pvStatus");
-if(data.PVA){
-  pvStatusEl.textContent = "Available";
-  pvStatusEl.style.color = "green";
-} 
-else if(!data.PVA){
+
+
+if(!data.PVA){
   pvStatusEl.textContent = "Unavailable";
   pvStatusEl.style.color = "red";
 } 
-if(data.PVR){
-  pvStatusEl.textContent = "OK";
-  pvStatusEl.style.color = "Green";
+
+else if(data.PVA && data.PVR){
+  pvStatusEl.textContent = "ok";
+  pvStatusEl.style.color = "green";
 } 
-else if(!data.PVR){
+
+else {
   pvStatusEl.textContent = "Reverse Polarity";
   pvStatusEl.style.color = "red";
 }
