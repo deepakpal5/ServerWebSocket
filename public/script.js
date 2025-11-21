@@ -163,32 +163,32 @@ function updateUI(data){
 
   updateSolarGauge(parseFloat(data.Solar_Volt));
 
-  document.getElementById("inputVoltBar").style.width = (data.Input_VOLT/240*100) + "%";
+  document.getElementById("inputVoltBar").style.width = (data.Input_VOLT/340*100) + "%";
   document.getElementById("inputVoltLabel").textContent = data.Input_VOLT + "V";
 
   document.getElementById("inputFreqBar").style.width = (data.Input_FREQ/60*100) + "%";
   document.getElementById("inputFreqLabel").textContent = data.Input_FREQ + "Hz";
 
-  document.getElementById("outVoltBar").style.width = (data.Output_VOLT/240*100) + "%";
+  document.getElementById("outVoltBar").style.width = (data.Output_VOLT/340*100) + "%";
   document.getElementById("outVoltLabel").textContent = data.Output_VOLT + "V";
 
 
-  document.getElementById("outputFreqBar").style.width = (data.Output_FREQ/60*100) + "%";
+  document.getElementById("outputFreqBar").style.width = (data.Output_FREQ/70*100) + "%";
   document.getElementById("outputFreqLabel").textContent = data.Output_FREQ + "Hz";
 
 
   
 
 
-  document.getElementById("battVoltBar").style.width = (data.Batt_VOLT/65*100) + "%";
+  document.getElementById("battVoltBar").style.width = (data.Batt_VOLT/70*100) + "%";
   document.getElementById("battVolt").textContent = data.Batt_VOLT + " Volt";
 
-  document.getElementById("battCurrBar").style.width = (data.Charge_CURR/65*100) + "%";
+  document.getElementById("battCurrBar").style.width = (data.Charge_CURR/70*100) + "%";
   document.getElementById("battCurr").textContent = data.Charge_CURR + " Amp";
 
 
 
-  document.getElementById("inputFreqBar").style.width = (data.Input_FREQ/60*100) + "%";
+  document.getElementById("inputFreqBar").style.width = (data.Input_FREQ/70*100) + "%";
   document.getElementById("inputFreqLabel").textContent = data.Input_FREQ + "Hz";
 
 
@@ -236,13 +236,20 @@ const pvStatusEl = document.getElementById("pvStatus");
 if(data.PVA){
   pvStatusEl.textContent = "Available";
   pvStatusEl.style.color = "green";
-} else if(data.PVR){
-  pvStatusEl.textContent = "Reverse!";
+} 
+else if(!data.PVA){
+  pvStatusEl.textContent = "Unavailable";
   pvStatusEl.style.color = "red";
-} else {
-  pvStatusEl.textContent = "Not Available";
-  pvStatusEl.style.color = "orange";
+} 
+if(data.PVR){
+  pvStatusEl.textContent = "OK";
+  pvStatusEl.style.color = "Green";
+} 
+else if(!data.PVR){
+  pvStatusEl.textContent = "Reverse Polarity";
+  pvStatusEl.style.color = "red";
 }
+
 const mainEl = document.getElementById("mainStatus");
 mainEl.textContent = data.Mains;
 switch(data.Mains){

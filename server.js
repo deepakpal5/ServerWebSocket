@@ -145,7 +145,8 @@ app.get("/endpoints", (req, res) => {
 // ---- Start server ----
 
 const PORT = process.env.PORT || 5632;
-server.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
-});
+const HOST = process.env.HOST || "http://localhost";
 
+server.listen(PORT, () => {
+  console.log(`✅ Server running at ${HOST}:${PORT}`);
+});
