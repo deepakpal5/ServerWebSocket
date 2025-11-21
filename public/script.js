@@ -148,6 +148,55 @@ function updateSolarGauge(value) {
 
 
 
+let loadCurrent = 0;   // keep animation state
+
+function updateLOADGauge(value) {
+  const loadArc = document.getElementById("loadArc");
+  const loadLabel = document.getElementById("loadLabel");
+
+  // Handle missing / invalid data
+  if (value == null || isNaN(value)) {
+    loadArc.setAttribute("class", "fg inactive");
+    loadArc.setAttribute("stroke-dasharray", "0,100");
+    loadLabel.textContent = "--";
+    loadLabel.style.fill = "#999";
+    loadCurrent = 0;
+    return;
+  }
+
+  // Clamp value (assuming max 100% load or adjust as needed)
+  const maxLoad = 100;  
+  const newPercent = Math.min((value / maxLoad) * 100, 100);
+
+  loadArc.setAttribute("class", "fg active");
+  loadLabel.style.fill = "#0984e3"; // blue color for load
+
+  // Animation
+  const duration = 800;
+  const start = loadCurrent;
+  const end = newPercent;
+  const startTime = performance.now();
+
+  function animateGauge(now) {
+    const progress = Math.min((now - startTime) / duration, 1);
+    const eased = start + (end - start) * progress;
+
+    loadArc.setAttribute("stroke-dasharray", `${eased.toFixed(1)},100`);
+    loadLabel.textContent = `${value.toFixed(1)}`;
+
+    if (progress < 1) {
+      requestAnimationFrame(animateGauge);
+    } else {
+      loadCurrent = end;
+    }
+  }
+
+  requestAnimationFrame(animateGauge);
+}
+
+
+
+
 
 
 
@@ -159,6 +208,14 @@ function updateSolarGauge(value) {
 // --- Existing UI update ---
 function updateUI(data){
 
+  document.querySelectorAll("#loadBars .bar").forEach(bar=>{
+    bar.style.height = (Math.random()*data.Output_LOAD) + "%";
+  });
+  document.getElementById("outLoadLabel").textContent = ;
+
+
+
+updateLOADGauge(data.Output_LOAD)
 
 
   updateSolarGauge(parseFloat(data.Solar_Volt));
@@ -199,10 +256,7 @@ document.getElementById("solarMode").textContent = data.Solar_Mode;
 document.getElementById("pcuSwitch").textContent = data.PCU_Switch;
 
 
-  document.querySelectorAll("#loadBars .bar").forEach(bar=>{
-    bar.style.height = (Math.random()*data.Output_LOAD) + "%";
-  });
-  document.getElementById("outLoadLabel").textContent = data.Output_LOAD;
+
 
   const batteryEl = document.getElementById("battCharge").parentElement; // .battery container
 
