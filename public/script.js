@@ -106,20 +106,11 @@ function updateSolarGauge( value) {
     const angle = ( value/ 30) * 360;
     const gauge = document.getElementById("SolarAnglegauge");
     const valueText = document.getElementById("SolarTextgaugeValue");
-
-   
     gauge.style.background = `conic-gradient(#00b894 ${angle}deg, #ddd ${angle}deg)`;
-
-  
     valueText.textContent = value + " Amp";
-
-  
-
   }
 
 function updateLOADGauge( value) {
-    
-
     const angle = ( value/ 120) * 360;
     const gauge = document.getElementById("loadAnglegauge");
     const valueText = document.getElementById("loadTextgaugeValue");
@@ -142,7 +133,7 @@ function updateUI(data){
 updateLOADGauge(data.Output_LOAD)
 
 
-  updateSolarGauge(parseFloat(data.Solar_Volt));
+  updateSolarGauge(parseFloat(data.Solar_Current));
 
   document.getElementById("inputVoltBar").style.width = (data.Input_VOLT/340*100) + "%";
   document.getElementById("inputVoltLabel").textContent = data.Input_VOLT + "V";
