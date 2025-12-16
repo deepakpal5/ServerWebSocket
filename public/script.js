@@ -173,23 +173,17 @@ document.getElementById("pcuSwitch").textContent = data.PCU_Switch;
 
 
 
-  const batteryEl = document.getElementById("battCharge").parentElement; // .battery container
-
-
-
-document.getElementById("battCharge").style.width = Math.min(parseFloat(data.Battery_Connect)/14*100,100) + "%";
-
 
 
 document.getElementById("battVoltLabel").textContent = data.Battery_Connect;
-document.getElementById("battStatus").textContent = data.Battery_Status;
+// document.getElementById("battStatus").textContent = data.Battery_Status;
 
 // Animate if charging
-if(data.Battery_Status.toLowerCase() === "charging"){
-  batteryEl.classList.add("charge-anim");
-} else {
-  batteryEl.classList.remove("charge-anim");
-}
+// if(data.Battery_Status.toLowerCase() === "charging"){
+//   batteryEl.classList.add("charge-anim");
+// } else {
+//   batteryEl.classList.remove("charge-anim");
+// }
 
   document.getElementById("chargeMode").textContent = data.Charging_Mode;
   document.getElementById("battType").textContent =   data.Battery_Type;
